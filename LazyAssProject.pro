@@ -18,3 +18,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    resource.qrc
+RC_ICONS += tomato.ico
