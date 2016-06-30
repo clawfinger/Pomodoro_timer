@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -18,8 +19,14 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    void showTrayIcon();
     QSystemTrayIcon *trayIcon;
+    QMenu* trayIconMenu;
+    QAction* quitAction;
+    QAction* restoreAction;
+private slots:
+    void trayActionExecute();
+    void showTrayIcon();
+    void setTrayMenuActions();
 };
 
 #endif // MAINWINDOW_H

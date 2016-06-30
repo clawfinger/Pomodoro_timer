@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     showTrayIcon();
+    setTrayMenuActions();
 }
 
 MainWindow::~MainWindow()
@@ -19,4 +20,19 @@ void MainWindow::showTrayIcon(){
     trayIcon -> setIcon(trayImage);
     //trayIcon -> setContextMenu(trayIconMenu);
     trayIcon -> show();
+}
+
+void MainWindow::trayActionExecute(){
+    this->show();
+}
+
+void MainWindow::setTrayMenuActions(){
+    quitAction = new QAction("Exit", this);
+    restoreAction = new QAction("Restore", this);
+    trayIconMenu = new QMenu(this);
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+    trayIconMenu->addAction(restoreAction);
+    trayIconMenu->addAction(quitAction);
+    trayIcon->setContextMenu(trayIconMenu);
 }
