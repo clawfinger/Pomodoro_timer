@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Lazy Ass</string>
+   <string>Pomodoro </string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -30,11 +30,23 @@
           </item>
           <item>
            <widget class="QSpinBox" name="workTimeInput">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>20</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
               <width>50</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="singleStep">
+             <number>5</number>
+            </property>
+            <property name="value">
+             <number>25</number>
             </property>
            </widget>
           </item>
@@ -51,11 +63,20 @@
           </item>
           <item>
            <widget class="QSpinBox" name="workIntervalsNumber">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>20</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
               <width>50</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="value">
+             <number>2</number>
             </property>
            </widget>
           </item>
@@ -71,12 +92,21 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="freeTime">
+           <widget class="QSpinBox" name="funTimeInput">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>20</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
               <width>50</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="value">
+             <number>5</number>
             </property>
            </widget>
           </item>
