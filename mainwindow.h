@@ -5,8 +5,9 @@
 #include <QSystemTrayIcon>
 #include <QCloseEvent>
 #include <QTimer>
-
-
+#include <QSound>
+#define MINS_TO_MS 60000
+enum timerModeEnum {workTimer, funTimer};
 namespace Ui {
 class MainWindow;
 }
@@ -24,8 +25,11 @@ private:
     QSystemTrayIcon *trayIcon;
     QMenu* trayIconMenu;
     QAction* quitAction;
-    QAction* restoreAction;
-    //QTimer* timer;
+    QAction* stopTimerAction;
+    timerModeEnum timerMode;
+    QString trayIconPopupMessage;
+    QSound* notificationSound;
+    QTimer* timer;
 private slots:
     void trayActionExecute();
     void showTrayIcon();
@@ -35,6 +39,8 @@ private slots:
     void trayIconActivated(QSystemTrayIcon::ActivationReason);
     void startTimer();
     void timerFinished();
+    void trayIconMessageClicked();
+    void stopTimer();
 };
 
 #endif // MAINWINDOW_H

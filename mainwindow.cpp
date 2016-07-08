@@ -6,13 +6,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //timer = new QTimer(this);
+    timer = new QTimer(this);
+    timerMode = workTimer;
     showTrayIcon();
     setTrayMenuActions();
-    //connect(timer, SIGNAL(timeout()), this, SLOT(timerFinished()));
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(startTimer()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(hide()));
-
+    connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(trayIconMessageClicked()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerFinished()));
+    notificationSound = new QSound(":/Sound/arpeggio.wav", this);
 }
 
 MainWindow::~MainWindow()
@@ -35,11 +37,11 @@ void MainWindow::trayActionExecute(){
 
 void MainWindow::setTrayMenuActions(){
     quitAction = new QAction("Exit", this);
-    restoreAction = new QAction("Restore", this);
+    stopTimerAction = new QAction("Stop timer", this);
     trayIconMenu = new QMenu(this);
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-    connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
-    trayIconMenu->addAction(restoreAction);
+    connect(stopTimerAction, SIGNAL(triggered()), this, SLOT(stopTimer()));
+    trayIconMenu->addAction(stopTimerAction);
     trayIconMenu->addAction(quitAction);
     trayIcon->setContextMenu(trayIconMenu);
 }
@@ -64,12 +66,58 @@ void MainWindow::trayIconActivated(QSystemTrayIcon::ActivationReason reason){
 
 void MainWindow::startTimer()
 {
-    int time = ui->workTimeInput->value();
-    QTimer::singleShot(time*1000, this, SLOT(timerFinished()));
-    this->hide();
+    int workTime = ui->workTimeInput->value()*MINS_TO_MS;
+    int funTime = ui->funTimeInput->value()*MINS_TO_MS;
+    if(timerMode == workTimer)
+    {
+        timer->setInterval(workTime);
+        timer->setSingleShot(true);
+        timer->start();
+        //QTimer::singleShot((workTime), this, SLOT(timerFinished()));
+        this->hide();
+    }
+    else if(timerMode == funTimer)
+    {
+        timer->setInterval(funTime);
+        timer->setSingleShot(true);
+        timer->start();
+        //QTimer::singleShot(funTime, this, SLOT(timerFinished()));
+        this->hide();
+    }
 
 }
+
 void MainWindow::timerFinished()
 {
-    trayIcon->showMessage("Timeout", "Timer is finished");
+    notificationSound->play();
+    if(timerMode == workTimer)
+    {
+        trayIconPopupMessage = "Timer is finished. Click the message to start Fun timer";
+    }
+    else if(timerMode == funTimer)
+    {
+        trayIconPopupMessage = "Timer is finished. Click the message to start Work timer";
+    }
+    trayIcon->showMessage("Timeout", trayIconPopupMessage);
 }
+
+
+ void MainWindow::trayIconMessageClicked()
+ {
+     if(timerMode == workTimer)
+     {
+         timerMode = funTimer;
+         startTimer();
+     }
+     else if(timerMode == funTimer)
+     {
+         timerMode = workTimer;
+         startTimer();
+     }
+ }
+
+ void MainWindow::stopTimer()
+ {
+     timer->stop();
+     trayIcon->showMessage("Timer stopped", "Reset in main window");
+ }
