@@ -28,6 +28,8 @@ private:
     QMenu* trayIconMenu;
     QAction* quitAction;
     QAction* stopTimerAction;
+    QAction* m_startWorkTimer;
+    QAction* m_startFunTimer;
     timerModeEnum timerMode;
     QString trayIconPopupMessage;
     QSound* notificationSound;
@@ -43,6 +45,8 @@ private slots:
     void timerFinished();
     void trayIconMessageClicked();
     void stopTimer();
+    void startWorkTimer();
+    void startFunTimer();
 };
 
 #endif // MAINWINDOW_H
