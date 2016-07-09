@@ -12,6 +12,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = LazyAssProject
 TEMPLATE = app
 
+win32 {
+QMAKE_LFLAGS += -static-libgcc
+}
 
 SOURCES += main.cpp\
         mainwindow.cpp

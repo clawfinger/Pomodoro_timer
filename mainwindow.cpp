@@ -66,6 +66,9 @@ void MainWindow::trayIconActivated(QSystemTrayIcon::ActivationReason reason){
 
 void MainWindow::startTimer()
 {
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled( false );
+    ui->workTimeInput->setEnabled(false);
+    ui->funTimeInput->setEnabled(false);
     int workTime = ui->workTimeInput->value()*MINS_TO_MS;
     int funTime = ui->funTimeInput->value()*MINS_TO_MS;
     if(timerMode == workTimer)
@@ -118,6 +121,9 @@ void MainWindow::timerFinished()
 
  void MainWindow::stopTimer()
  {
+     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled( true );
+     ui->workTimeInput->setEnabled(true);
+     ui->funTimeInput->setEnabled(true);
      timer->stop();
      trayIcon->showMessage("Timer stopped", "Reset in main window");
  }

@@ -6,8 +6,10 @@
 #include <QCloseEvent>
 #include <QTimer>
 #include <QSound>
+#include <QPushButton>
 #define MINS_TO_MS 60000
 enum timerModeEnum {workTimer, funTimer};
+
 namespace Ui {
 class MainWindow;
 }
