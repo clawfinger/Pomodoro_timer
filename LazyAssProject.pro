@@ -17,9 +17,11 @@ QMAKE_LFLAGS += -static-libgcc
 }
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    timewidget.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    timewidget.h
 
 FORMS    += mainwindow.ui
 
