@@ -6,29 +6,34 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    timer = new QTimer(this);
-    timerMode = workTimer;
+    m_timer = new QTimer(this);
+    m_timerMode = workTimer;
+
     showTrayIcon();
     setTrayMenuActions();
+
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(startTimer()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(hide()));
-    connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(trayIconMessageClicked()));
-    connect(timer, SIGNAL(timeout()), this, SLOT(timerFinished()));
-    notificationSound = new QSound(":/Sound/arpeggio.wav", this);
+
+    connect(m_trayIcon, SIGNAL(messageClicked()), this, SLOT(trayIconMessageClicked()));
+
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(timerFinished()));
+
+    m_notificationSound = new QSound(":/Sound/arpeggio.wav", this);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-void MainWindow::showTrayIcon(){
-    trayIcon = new QSystemTrayIcon(this);
+void MainWindow::showTrayIcon(){           //setting up a tray icon
+    m_trayIcon = new QSystemTrayIcon(this);
     QIcon trayImage(":/images/tomato.ico");
-    trayIcon -> setIcon(trayImage);
-    trayIcon->setToolTip("Get back to work!");
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+    m_trayIcon -> setIcon(trayImage);
+    m_trayIcon->setToolTip("Get back to work!");
+    connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconActivated(QSystemTrayIcon::ActivationReason)));
-    trayIcon -> show();
+    m_trayIcon -> show();
 }
 
 void MainWindow::trayActionExecute(){
@@ -37,23 +42,27 @@ void MainWindow::trayActionExecute(){
 }
 
 void MainWindow::setTrayMenuActions(){
-    quitAction = new QAction("Exit", this);
-    stopTimerAction = new QAction("Stop timer", this);
+    m_quitAction = new QAction("Exit", this);
+
+    m_stopTimerAction = new QAction("Stop timer", this);
     m_startWorkTimer = new QAction("Start Work", this);
     m_startFunTimer = new QAction("Start Fun", this);
-    trayIconMenu = new QMenu(this);
-    trayIconMenu->addAction(m_startWorkTimer);
-    trayIconMenu->addAction(m_startFunTimer);
-    trayIconMenu->addAction(stopTimerAction);
-    trayIconMenu->addAction(quitAction);
-    trayIcon->setContextMenu(trayIconMenu);
-    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-    connect(stopTimerAction, SIGNAL(triggered()), this, SLOT(stopTimer()));
+
+    m_trayIconMenu = new QMenu(this);
+
+    m_trayIconMenu->addAction(m_startWorkTimer);
+    m_trayIconMenu->addAction(m_startFunTimer);
+    m_trayIconMenu->addAction(m_stopTimerAction);
+    m_trayIconMenu->addAction(m_quitAction);
+    m_trayIcon->setContextMenu(m_trayIconMenu);
+
+    connect(m_quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(m_stopTimerAction, SIGNAL(triggered()), this, SLOT(stopTimer()));
     connect(m_startWorkTimer, SIGNAL(triggered()), this, SLOT(startWorkTimer()));
     connect(m_startFunTimer, SIGNAL(triggered()), this, SLOT(startFunTimer()));
 }
 
-void MainWindow::changeEvent(QEvent *event){
+void MainWindow::changeEvent(QEvent *event){            //minimising and closing app window hides it to tray
     if(event->type() == QEvent::WindowStateChange)
     {
         event->ignore();
@@ -74,29 +83,31 @@ void MainWindow::trayIconActivated(QSystemTrayIcon::ActivationReason reason){
 void MainWindow::startTimer()
 {
 
-        stopTimerAction->setEnabled(true);
+        m_stopTimerAction->setEnabled(true);
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled( false );
+
         ui->workTimeInput->setEnabled(false);
         ui->funTimeInput->setEnabled(false);
+
         int workTime = ui->workTimeInput->value()*MINS_TO_MS;
         int funTime = ui->funTimeInput->value()*MINS_TO_MS;
-        if(timerMode == workTimer)
+        if(m_timerMode == workTimer)
         {
-            timer->setInterval(workTime);
-            timer->setSingleShot(true);
-            timer->start();
+            m_timer->setInterval(workTime);
+            m_timer->setSingleShot(true);
+            m_timer->start();
             //QTimer::singleShot((workTime), this, SLOT(timerFinished()));
             this->hide();
-            trayIcon->showMessage("Work timer", "Started work timer");
+            m_trayIcon->showMessage("Work timer", "Started work timer");
         }
-        else if(timerMode == funTimer)
+        else if(m_timerMode == funTimer)
         {
-            timer->setInterval(funTime);
-            timer->setSingleShot(true);
-            timer->start();
+            m_timer->setInterval(funTime);
+            m_timer->setSingleShot(true);
+            m_timer->start();
             //QTimer::singleShot(funTime, this, SLOT(timerFinished()));
             this->hide();
-            trayIcon->showMessage("Fun timer", "Started fun timer");
+            m_trayIcon->showMessage("Fun timer", "Started fun timer");
         }
 
 
@@ -104,32 +115,32 @@ void MainWindow::startTimer()
 
 void MainWindow::timerFinished()
 {
-    notificationSound->play();
-    if(timerMode == workTimer)
+    m_notificationSound->play();
+    if(m_timerMode == workTimer)
     {
-        trayIconPopupMessage = "Timer is finished. Click the message to start Fun timer";
+        m_trayIconPopupMessage = "Timer is finished. Click the message to start Fun timer";
     }
-    else if(timerMode == funTimer)
+    else if(m_timerMode == funTimer)
     {
-        trayIconPopupMessage = "Timer is finished. Click the message to start Work timer";
+        m_trayIconPopupMessage = "Timer is finished. Click the message to start Work timer";
     }
-    trayIcon->showMessage("Timeout", trayIconPopupMessage);
+    m_trayIcon->showMessage("Timeout", m_trayIconPopupMessage);
 }
 
 
- void MainWindow::trayIconMessageClicked() //УБРАТЬ К ХУЯМ
+ void MainWindow::trayIconMessageClicked()
  {
-     if(!timer->isActive())
+     if(!m_timer->isActive())
      {
-         if(timerMode == workTimer)
+         if(m_timerMode == workTimer)
          {
-             timerMode = funTimer;
+             m_timerMode = funTimer;
              startTimer();
 
          }
-         else if(timerMode == funTimer)
+         else if(m_timerMode == funTimer)
          {
-             timerMode = workTimer;
+             m_timerMode = workTimer;
              startTimer();
          }
      }
@@ -137,8 +148,8 @@ void MainWindow::timerFinished()
 
  void MainWindow::stopTimer()
  {
-     timer->stop();
-     stopTimerAction->setEnabled(false);
+     m_timer->stop();
+     m_stopTimerAction->setEnabled(false);
      ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled( true );
      ui->workTimeInput->setEnabled(true);
      ui->funTimeInput->setEnabled(true);
@@ -148,20 +159,20 @@ void MainWindow::timerFinished()
 
  void MainWindow::startWorkTimer()
  {
-     if(!timer->isActive())
+     if(!m_timer->isActive())
      {
-         timerMode = workTimer;
+         m_timerMode = workTimer;
          startTimer();
-         trayIcon->showMessage("Work timer", "Started work timer");
+         m_trayIcon->showMessage("Work timer", "Started work timer");
      }
  }
 
  void MainWindow::startFunTimer()
  {
-     if(!timer->isActive())
+     if(!m_timer->isActive())
      {
-         timerMode = funTimer;
+         m_timerMode = funTimer;
          startTimer();
-         trayIcon->showMessage("Fun timer", "Started fun timer");
+         m_trayIcon->showMessage("Fun timer", "Started fun timer");
      }
  }

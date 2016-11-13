@@ -24,16 +24,16 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QSystemTrayIcon *trayIcon;
-    QMenu* trayIconMenu;
-    QAction* quitAction;
-    QAction* stopTimerAction;
+    QSystemTrayIcon *m_trayIcon;
+    QMenu* m_trayIconMenu;
+    QAction* m_quitAction;
+    QAction* m_stopTimerAction;
     QAction* m_startWorkTimer;
     QAction* m_startFunTimer;
-    timerModeEnum timerMode;
-    QString trayIconPopupMessage;
-    QSound* notificationSound;
-    QTimer* timer;
+    timerModeEnum m_timerMode;
+    QString m_trayIconPopupMessage;
+    QSound* m_notificationSound;
+    QTimer* m_timer;
 private slots:
     void trayActionExecute();
     void showTrayIcon();
